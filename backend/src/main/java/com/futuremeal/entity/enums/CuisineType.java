@@ -1,0 +1,7 @@
+package com.futuremeal.entity.enums;
+
+public enum CuisineType {
+    SOUTH_INDIAN, NORTH_INDIAN, HYDERABADI, ANDHRA, PUNJABI,
+    MUGHLAI, STREET_FOOD, CHINESE, CONTINENTAL, BIRYANI,
+    SEAFOOD, DESSERTS, HEALTHY, ANY
+}

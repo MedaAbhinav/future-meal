@@ -1,0 +1,33 @@
+﻿# Secrets - NEVER commit
+.env
+*.env
+.env.local
+.env.production
+
+# Frontend build artifacts
+frontend/node_modules/
+frontend/dist/
+frontend/.eslintcache
+
+# Backend build artifacts
+backend/target/
+backend/.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.iws
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+*.jar
+!**/src/main/**/*.jar
+
+# Logs
+*.log
+logs/
