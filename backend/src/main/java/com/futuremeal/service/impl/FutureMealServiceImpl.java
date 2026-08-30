@@ -34,6 +34,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
+@Transactional(readOnly = true)
 public class FutureMealServiceImpl {
 
     private final FutureMealRepository futureMealRepository;

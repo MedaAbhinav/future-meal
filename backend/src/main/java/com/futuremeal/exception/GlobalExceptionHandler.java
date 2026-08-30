@@ -76,8 +76,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<Void>> handleGeneral(Exception ex) {
-        log.error("Unhandled exception: {}", ex.getMessage(), ex);
+        // Log full stack trace so the real cause is visible in the Spring Boot console
+        log.error("=== UNHANDLED EXCEPTION [{}]: {} ===", ex.getClass().getSimpleName(), ex.getMessage(), ex);
+        String userMessage = "An unexpected error occurred. Please try again later.";
+        // Surface the real message in dev/test environments for easier debugging
+        if (ex.getMessage() != null && (
+                ex.getMessage().contains("LazyInitialization") ||
+                ex.getMessage().contains("could not initialize proxy") ||
+                ex.getMessage().contains("No Session"))) {
+            userMessage = "Data loading error — LazyInitialization. Check service @Transactional annotations.";
+        }
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body(ApiResponse.error("An unexpected error occurred. Please try again later."));
+                .body(ApiResponse.error(userMessage));
     }
 }

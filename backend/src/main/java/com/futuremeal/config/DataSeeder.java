@@ -28,11 +28,28 @@ public class DataSeeder implements CommandLineRunner {
     @Override
     @Transactional
     public void run(String... args) {
-        if (userRepository.count() > 0) { log.info("Already seeded."); return; }
-        log.info("Seeding FutureMeal demo data...");
-        seedUsers();
-        seedRestaurantsAndFoods();
-        log.info("Seeded 10 restaurants, 120+ food items.");
+        long userCount = userRepository.count();
+        long restaurantCount = restaurantRepository.count();
+        log.info("Seed check — users: {}, restaurants: {}", userCount, restaurantCount);
+
+        if (userCount > 0 && restaurantCount >= 10) {
+            log.info("Already fully seeded ({} users, {} restaurants). Skipping.", userCount, restaurantCount);
+            return;
+        }
+
+        if (userCount == 0) {
+            log.info("Seeding all demo data from scratch...");
+            seedUsers();
+            seedRestaurantsAndFoods();
+        } else {
+            // Users exist but restaurants are missing or incomplete — reseed restaurants
+            log.info("Users exist but only {} restaurants found. Re-seeding restaurants...", restaurantCount);
+            foodItemRepository.deleteAll();
+            restaurantRepository.deleteAll();
+            seedRestaurantsAndFoods();
+        }
+
+        log.info("Seeding complete — {} users, {} restaurants.", userRepository.count(), restaurantRepository.count());
     }
 
     private void seedUsers() {

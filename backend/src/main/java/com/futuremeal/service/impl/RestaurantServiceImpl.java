@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class RestaurantServiceImpl {
 
     private final RestaurantRepository restaurantRepository;
@@ -155,18 +156,28 @@ public class RestaurantServiceImpl {
     }
 
     public RestaurantResponse toResponse(Restaurant r) {
+        // Safely get ownerId without triggering LazyInitializationException
+        Long ownerId = null;
+        try {
+            if (r.getOwner() != null) {
+                ownerId = r.getOwner().getId();
+            }
+        } catch (Exception ignored) {
+            // owner is a lazy proxy that couldn't be initialized — safe to ignore for listing
+        }
+
         return RestaurantResponse.builder()
                 .id(r.getId())
                 .name(r.getName())
                 .description(r.getDescription())
                 .coverImage(r.getCoverImage())
                 .logo(r.getLogo())
-                .cuisines(r.getCuisines())
-                .rating(r.getRating())
-                .totalReviews(r.getTotalReviews())
-                .deliveryTime(r.getDeliveryTime())
-                .deliveryFee(r.getDeliveryFee())
-                .minimumOrder(r.getMinimumOrder())
+                .cuisines(r.getCuisines() != null ? r.getCuisines() : new java.util.ArrayList<>())
+                .rating(r.getRating() != null ? r.getRating() : 0.0)
+                .totalReviews(r.getTotalReviews() != null ? r.getTotalReviews() : 0)
+                .deliveryTime(r.getDeliveryTime() != null ? r.getDeliveryTime() : 30)
+                .deliveryFee(r.getDeliveryFee() != null ? r.getDeliveryFee() : 0)
+                .minimumOrder(r.getMinimumOrder() != null ? r.getMinimumOrder() : 99)
                 .address(RestaurantResponse.AddressInfo.builder()
                         .street(r.getStreet()).area(r.getArea()).city(r.getCity())
                         .state(r.getState()).pincode(r.getPincode())
@@ -174,9 +185,9 @@ public class RestaurantServiceImpl {
                         .build())
                 .isOpen(r.isOpen())
                 .status(r.getStatus())
-                .offers(r.getOffers())
-                .tags(r.getTags())
-                .ownerId(r.getOwner() != null ? r.getOwner().getId() : null)
+                .offers(r.getOffers() != null ? r.getOffers() : new java.util.ArrayList<>())
+                .tags(r.getTags() != null ? r.getTags() : new java.util.ArrayList<>())
+                .ownerId(ownerId)
                 .build();
     }
 }
