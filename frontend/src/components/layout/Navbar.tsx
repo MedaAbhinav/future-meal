@@ -3,6 +3,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { ShoppingBag, Clock, User, LogOut, Menu, X, ChevronDown, Package, Settings } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useCart } from '../../context/CartContext';
+import toast from 'react-hot-toast';
 import clsx from 'clsx';
 
 export function Navbar() {
@@ -37,7 +38,11 @@ export function Navbar() {
     return () => document.removeEventListener('mousedown', handler);
   }, []);
 
-  const handleLogout = async () => { await logout(); navigate('/'); };
+  const handleLogout = async () => {
+    await logout();
+    toast.success('You have been signed out successfully.');
+    navigate('/');
+  };
 
   const dashLink = () => {
     if (!user) return '/login';

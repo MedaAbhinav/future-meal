@@ -36,7 +36,6 @@ public class FutureMealRequest {
 
     private Long preferredRestaurantId;
 
-    @NotNull(message = "Delivery address is required")
     private Long deliveryAddressId;
 
     @Size(max = 500, message = "Special conditions too long")

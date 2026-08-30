@@ -24,7 +24,10 @@ export default function LoginPage() {
     setLoading(true);
     try {
       await login({ email, password });
-      toast.success('Welcome back!');
+      // Personalized welcome — get the name from stored user
+      const storedUser = JSON.parse(localStorage.getItem('futuremeal_user') || '{}');
+      const firstName = storedUser?.name?.split(' ')[0] || 'there';
+      toast.success(`Welcome back, ${firstName}! 🍛`);
       navigate(from, { replace: true });
     } catch (err) {
       toast.error(extractError(err));
